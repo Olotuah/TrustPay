@@ -15,7 +15,6 @@ export default function Register() {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/register`, {
         email,
         password,
-        role,
       });
       setMessage("✅ Registration successful!");
     } catch (err) {
