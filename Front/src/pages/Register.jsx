@@ -1,40 +1,41 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { motion } from 'framer-motion';
+import { useState } from "react";
+import axios from "axios";
+import { motion } from "framer-motion";
 
 export default function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
+    setMessage("");
 
     try {
-      const res = await axios.post('http://localhost:5000/register', {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/register`, {
         email,
         password,
         role,
       });
-      setMessage('✅ Registration successful!');
+      setMessage("✅ Registration successful!");
     } catch (err) {
       console.error(err);
-      setMessage('❌ Error registering user.');
+      setMessage("❌ Error registering user.");
     }
   };
 
   return (
     <div className="min-h-screen animate-gradient flex items-center justify-center font-manrope relative overflow-hidden">
-
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="relative z-10 max-w-md w-full bg-white/20 bg-opacity-30 backdrop-blur-2xl rounded-3xl shadow-xl p-8 border border-white/20"
       >
-        <h2 className="text-3xl font-bold mb-6 text-white text-center font-inter">Create Your Account</h2>
-        
+        <h2 className="text-3xl font-bold mb-6 text-white text-center font-inter">
+          Create Your Account
+        </h2>
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm text-white mb-1">Email</label>

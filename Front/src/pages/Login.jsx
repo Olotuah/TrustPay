@@ -1,39 +1,38 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import axios from "axios";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   // State for form inputs
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
 
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
+    setMessage("");
 
     try {
-      const res = await axios.post('http://localhost:5000/login', {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, {
         email,
-        password
+        password,
       });
 
       // Save the JWT token in localStorage for now
-      localStorage.setItem('token', res.data.token);
+      localStorage.setItem("token", res.data.token);
 
-      setMessage('✅ Login successful!');
+      setMessage("✅ Login successful!");
       // Redirect to dashboard or home
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }, 1000);
-
     } catch (err) {
       console.error(err);
-      setMessage('❌ Invalid email or password.');
+      setMessage("❌ Invalid email or password.");
     }
   };
 
@@ -45,7 +44,9 @@ export default function Login() {
         transition={{ duration: 0.8 }}
         className="relative z-10 max-w-md w-full bg-white/20 backdrop-blur-2xl rounded-3xl shadow-xl p-8 border border-white/30 hover:bg-white/30 transition duration-300"
       >
-        <h2 className="text-3xl font-bold mb-6 text-white text-center font-inter">Welcome Back</h2>
+        <h2 className="text-3xl font-bold mb-6 text-white text-center font-inter">
+          Welcome Back
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
