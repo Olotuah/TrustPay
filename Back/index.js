@@ -10,7 +10,12 @@ const jwt = require("jsonwebtoken");
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://trustpay-8hfr.onrender.com",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 function authenticateToken(req, res, next) {

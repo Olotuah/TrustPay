@@ -1,38 +1,39 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Dashboard() {
-  // State
   const [escrows, setEscrows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [sellerEmail, setSellerEmail] = useState('');
-  const [amount, setAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [releaseMessage, setReleaseMessage] = useState('');
-  const [createMessage, setCreateMessage] = useState('');
-  const [cancelMessage, setCancelMessage] = useState('');
+  const [sellerEmail, setSellerEmail] = useState("");
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const [releaseMessage, setReleaseMessage] = useState("");
+  const [createMessage, setCreateMessage] = useState("");
+  const [cancelMessage, setCancelMessage] = useState("");
 
   const navigate = useNavigate();
 
+  const API = import.meta.env.VITE_API_URL;
+
   // Load escrows
   const fetchEscrows = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      navigate('/');
+      navigate("/");
       return;
     }
 
     try {
-      const res = await axios.get('http://localhost:5000/buyer/escrows', {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await axios.get(`${API}/buyer/escrows`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setEscrows(res.data);
     } catch (err) {
       console.error(err);
-      navigate('/');
+      navigate("/");
     } finally {
       setLoading(false);
     }
@@ -44,87 +45,90 @@ export default function Dashboard() {
 
   // Logout
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
-  // Create
+  // Create escrow
   const handleCreateEscrow = async (e) => {
     e.preventDefault();
-    setCreateMessage('');
+    setCreateMessage("");
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     try {
-      const res = await axios.post('http://localhost:5000/create-escrow', {
-        seller_email: sellerEmail,
-        amount,
-        description
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.post(
+        `${API}/create-escrow`,
+        {
+          seller_email: sellerEmail,
+          amount,
+          description,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       const newEscrow = res.data.escrow;
       setEscrows((prev) => [newEscrow, ...prev]);
 
-      setCreateMessage('✅ Escrow created!');
-      setTimeout(() => setCreateMessage(''), 4000);
+      setCreateMessage("✅ Escrow created!");
+      setTimeout(() => setCreateMessage(""), 4000);
 
-      setSellerEmail('');
-      setAmount('');
-      setDescription('');
+      setSellerEmail("");
+      setAmount("");
+      setDescription("");
       setShowCreate(false);
-
     } catch (err) {
       console.error(err);
-      setCreateMessage('❌ Failed to create escrow.');
-      setTimeout(() => setCreateMessage(''), 4000);
+      setCreateMessage("❌ Failed to create escrow.");
+      setTimeout(() => setCreateMessage(""), 4000);
     }
   };
 
-  // Cancel
+  // Cancel escrow
   const handleCancelEscrow = async (escrowId) => {
-    setCancelMessage('');
+    setCancelMessage("");
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
-      await axios.post('http://localhost:5000/cancel-escrow',
+      await axios.post(
+        `${API}/cancel-escrow`,
         { escrow_id: escrowId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setCancelMessage('✅ Escrow cancelled successfully!');
-      setTimeout(() => setCancelMessage(''), 4000);
+      setCancelMessage("✅ Escrow cancelled successfully!");
+      setTimeout(() => setCancelMessage(""), 4000);
 
       fetchEscrows();
-
     } catch (err) {
       console.error(err);
-      setCancelMessage('❌ Failed to cancel escrow.');
-      setTimeout(() => setCancelMessage(''), 4000);
+      setCancelMessage("❌ Failed to cancel escrow.");
+      setTimeout(() => setCancelMessage(""), 4000);
     }
   };
 
-  // Release
+  // Release payment
   const handleReleasePayment = async (escrowId) => {
-    setReleaseMessage('');
+    setReleaseMessage("");
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
-      await axios.post('http://localhost:5000/release-payment',
+      await axios.post(
+        `${API}/release-payment`,
         { escrow_id: escrowId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setReleaseMessage('✅ Payment released successfully!');
-      setTimeout(() => setReleaseMessage(''), 4000);
+      setReleaseMessage("✅ Payment released successfully!");
+      setTimeout(() => setReleaseMessage(""), 4000);
 
       fetchEscrows();
-
     } catch (err) {
       console.error(err);
-      setReleaseMessage('❌ Failed to release payment.');
-      setTimeout(() => setReleaseMessage(''), 4000);
+      setReleaseMessage("❌ Failed to release payment.");
+      setTimeout(() => setReleaseMessage(""), 4000);
     }
   };
 
@@ -136,8 +140,7 @@ export default function Dashboard() {
         transition={{ duration: 0.8 }}
         className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 border border-gray-200"
       >
-
-        {/* Feedback messages */}
+        {/* Feedback Messages */}
         {cancelMessage && (
           <motion.p
             initial={{ opacity: 0 }}
@@ -149,11 +152,15 @@ export default function Dashboard() {
         )}
 
         {releaseMessage && (
-          <p className="text-center text-sm mt-2 text-green-600">{releaseMessage}</p>
+          <p className="text-center text-sm mt-2 text-green-600">
+            {releaseMessage}
+          </p>
         )}
 
         {createMessage && (
-          <p className="text-center text-sm mt-2 text-indigo-600">{createMessage}</p>
+          <p className="text-center text-sm mt-2 text-indigo-600">
+            {createMessage}
+          </p>
         )}
 
         {/* Header */}
@@ -167,7 +174,7 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Loading and empty states */}
+        {/* Loading and Empty State */}
         {loading ? (
           <p className="text-gray-700">Loading...</p>
         ) : escrows.length === 0 ? (
@@ -179,13 +186,21 @@ export default function Dashboard() {
                 key={escrow.id}
                 className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition"
               >
-                <p className="text-gray-900"><strong>Seller:</strong> {escrow.seller_email}</p>
-                <p className="text-gray-900"><strong>Amount:</strong> ₦{escrow.amount}</p>
-                <p className="text-gray-900"><strong>Status:</strong> {escrow.status}</p>
-                <p className="text-gray-700 text-sm opacity-80">Created: {new Date(escrow.created_at).toLocaleString()}</p>
+                <p className="text-gray-900">
+                  <strong>Seller:</strong> {escrow.seller_email}
+                </p>
+                <p className="text-gray-900">
+                  <strong>Amount:</strong> ₦{escrow.amount}
+                </p>
+                <p className="text-gray-900">
+                  <strong>Status:</strong> {escrow.status}
+                </p>
+                <p className="text-gray-700 text-sm opacity-80">
+                  Created: {new Date(escrow.created_at).toLocaleString()}
+                </p>
 
-                {/* Buttons for pending */}
-                {escrow.status === 'pending' && (
+                {/* Buttons for pending escrows */}
+                {escrow.status === "pending" && (
                   <div className="flex gap-2 mt-2">
                     <button
                       onClick={() => handleCancelEscrow(escrow.id)}
@@ -215,7 +230,7 @@ export default function Dashboard() {
             + Create New Escrow
           </button>
 
-          {/* Modal */}
+          {/* Create Modal */}
           {showCreate && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -225,7 +240,9 @@ export default function Dashboard() {
               className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50"
             >
               <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl border border-gray-200">
-                <h3 className="text-xl font-bold mb-4 text-gray-900">Create New Escrow</h3>
+                <h3 className="text-xl font-bold mb-4 text-gray-900">
+                  Create New Escrow
+                </h3>
                 <input
                   type="email"
                   placeholder="Seller Email"
@@ -253,7 +270,9 @@ export default function Dashboard() {
                   Submit
                 </button>
                 {createMessage && (
-                  <p className="text-center text-sm mt-2 text-indigo-600">{createMessage}</p>
+                  <p className="text-center text-sm mt-2 text-indigo-600">
+                    {createMessage}
+                  </p>
                 )}
                 <button
                   onClick={() => setShowCreate(false)}
