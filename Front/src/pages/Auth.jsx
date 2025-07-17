@@ -21,7 +21,7 @@ export default function Auth() {
     setMessage("");
 
     try {
-      const res = await axios.post("http://localhost:5000/register", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/register`, {
         email,
         password,
         role, // convert to boolean
@@ -41,10 +41,13 @@ export default function Auth() {
     setMessage("");
 
     try {
-      const response = await axios.post("http://localhost:5000/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/login`,
+        {
+          email,
+          password,
+        }
+      );
 
       const token = response.data.token;
       const isSeller = response.data.user.is_seller;
