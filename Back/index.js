@@ -12,7 +12,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "https://trustpay-8hfr.onrender.com",
+    origin: "https://trust-payy.vercel.app",
     credentials: true,
   })
 );
