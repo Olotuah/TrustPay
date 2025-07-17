@@ -1,6 +1,8 @@
 // Import required modules
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
 const db = require("./db");
 const bcrypt = require("bcrypt");
@@ -17,6 +19,20 @@ app.use(
   })
 );
 app.use(express.json());
+
+// 👇 Add this function to initialize your tables from init.sql
+const initDb = async () => {
+  try {
+    const sql = fs.readFileSync(path.join(__dirname, "init.sql")).toString();
+    await db.query(sql);
+    console.log("✅ Tables ensured in DB.");
+  } catch (err) {
+    console.error("❌ Failed to initialize DB tables:", err);
+  }
+};
+
+// Call it when server starts
+initDb();
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
