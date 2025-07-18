@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState(""); // ✅ added role state
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
@@ -12,9 +13,11 @@ export default function Register() {
     setMessage("");
 
     try {
+      // ✅ Send role to backend too
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/register`, {
         email,
         password,
+        role,
       });
       setMessage("✅ Registration successful!");
     } catch (err) {
@@ -58,6 +61,21 @@ export default function Register() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+          </div>
+
+          {/* ✅ Role Dropdown */}
+          <div>
+            <label className="block text-sm text-white mb-1">Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full rounded-lg px-4 py-2 bg-white/30 backdrop-blur border border-white/30 focus:outline-none focus:ring-2 focus:ring-accent text-white"
+              required
+            >
+              <option value="">Select role</option>
+              <option value="buyer">Buyer</option>
+              <option value="seller">Seller</option>
+            </select>
           </div>
 
           <button
