@@ -8,16 +8,21 @@ const db = require("./db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// Initialize Express app
+const express = require("express");
 const app = express();
 
-// Middleware
+// ✅ CORS middleware
 app.use(
   cors({
     origin: "https://trust-payy.vercel.app",
     credentials: true,
   })
 );
+
+// ✅ Preflight request handler
+app.options("*", cors());
+
+// ✅ Body parser
 app.use(express.json());
 
 // 👇 Add this function to initialize your tables from init.sql
