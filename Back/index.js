@@ -75,8 +75,8 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await db.query(
-      "INSERT INTO users (email, password, is_seller) VALUES ($1, $2, $3) RETURNING id, email, is_seller, created_at",
-      [email, hashedPassword, isSeller] // ✅ include is_seller in values
+      "INSERT INTO users (email, password_hash, is_seller) VALUES ($1, $2, $3) RETURNING id, email, is_seller, created_at",
+      [email, hashedPassword, isSeller]
     );
 
     res.status(201).json({
@@ -111,7 +111,7 @@ app.post("/login", async (req, res) => {
     const user = result.rows[0];
 
     // Compare entered password with hashed password
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password_hash);
 
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
