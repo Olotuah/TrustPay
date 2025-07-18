@@ -5,11 +5,13 @@ import axios from "axios";
 const SellerDashboard = () => {
   const [escrows, setEscrows] = useState([]);
 
+  const API = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchSellerEscrows = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/seller-escrows", {
+        const res = await axios.get(`${API}/seller-escrows`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setEscrows(res.data.escrows);

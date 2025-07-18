@@ -5,9 +5,11 @@ require("dotenv").config();
 // Create a new pool using your DATABASE_URL with SSL enabled
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // Render requires this for self-signed certs
-  },
+  // Only use SSL if needed
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 
 // Test the connection immediately
